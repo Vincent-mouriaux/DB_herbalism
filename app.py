@@ -12,7 +12,7 @@ mycursor = mydb.cursor()
 def menu():
     choix = input("\nVeuillez sélectionner une option : \n(L)ister les plantes de la DB \n" \
                   + "(A)jouter une plante à la liste \n(S)upprimer une plante (par son Id) \n" \
-                  + "(C)hercher une plante \n(Q)uitter \n")
+                  + "(C)hercher une plante \n(Q)uitter \n(I)ndiquer la sous classe de la plante ")
     return choix
 
 def list_plants():
@@ -47,6 +47,14 @@ def lookfor_plant():
     myresult = mycursor.fetchall()
     print(myresult)
 
+def sub_class():
+    plant_id = input("Tapez l'id de votre recherche : ")
+    sql = "SELECT plant.name, underclass.name_fr from plant JOIN family on plant.family_id = family.id" \
+          " JOIN underclass on family.underclass_id = underclass.id WHERE plant.id = %s"
+    mycursor.execute(sql, (plant_id, ))
+    result = mycursor.fetchall()[0]
+    print("La plante d'Id {} est {} de la sous classe {}.".format(plant_id, result[0], result[1]))
+
 while True:
     choix = menu()
     if choix.upper() == "L":
@@ -57,5 +65,7 @@ while True:
         delete_plant()
     elif choix.upper() == "C":
         lookfor_plant()
+    elif choix.upper() == "I":
+        sub_class()
     elif choix.upper() == "Q":
         exit()
